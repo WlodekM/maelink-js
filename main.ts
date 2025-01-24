@@ -48,6 +48,8 @@ export default class MAELINK extends EventEmitter {
         const client = this;
         this._ws.addEventListener('message', function (ev) {
             const data = JSON.parse(ev.data);
+            client.emit('message', data)
+            client.emit('cmd_'+data.cmd, data)
             switch (data.cmd) {
                 case 'post_home':
                     client.emit('post', data.post)
@@ -78,5 +80,18 @@ export default class MAELINK extends EventEmitter {
             token: this.token,
             reply_to: typeof message == 'object' ? message.replyTo : undefined
         }));
+    }
+
+    fetchMessages(offset: number = 0) {
+        return new Promise((resolve, reject) => {
+            this._ws.send(JSON.stringify({
+                cmd: "fetch",
+                offset: offset
+            }))
+            this.once('cmd_fetch', (resp) => {
+                if (resp.status !== 'success') return reject();
+                resolve(resp.posts)
+            })
+        })
     }
 }
