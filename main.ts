@@ -5,6 +5,15 @@ interface MessageArg {
     replyTo?: string
 }
 
+export interface Post {
+    _id: string,
+    p: string,
+    u: string,
+    e: string,
+    reply_to: null | string,
+    post_id: string
+}
+
 export default class MAELINK extends EventEmitter {
     private token: string | null = null;
     private _ws: WebSocket;
@@ -16,7 +25,6 @@ export default class MAELINK extends EventEmitter {
     }
 
     get(path: string, headers: Record<string, string> = {}) {
-        console.log(this.http + path);
         if (this.token) headers = {...headers, token: this.token};
         return fetch(this.http + path, {
             headers,
@@ -24,7 +32,6 @@ export default class MAELINK extends EventEmitter {
     }
 
     post(path: string, body: string | object, headers: Record<string, string> = {}) {
-        console.log(this.http + path);
         if (this.token) headers = {...headers, token: this.token};
         if (typeof body == "object") {
             headers['content-type'] = 'application/json'
@@ -82,7 +89,7 @@ export default class MAELINK extends EventEmitter {
         }));
     }
 
-    fetchMessages(offset: number = 0): Promise<any[]> {
+    fetchMessages(offset: number = 0): Promise<Post[]> {
         return new Promise((resolve, reject) => {
             this._ws.send(JSON.stringify({
                 cmd: "fetch",

@@ -19,7 +19,7 @@ interface Post {
 
 ml.on('post', ({p: post, _id}: Post) => {
     console.log(post)
-    if (!post.startsWith(`@wlod-bot`)) return;
+    if (!post.startsWith(`@${username}`)) return;
     ml.sendMessage({
         message: 'hello',
         replyTo: _id
