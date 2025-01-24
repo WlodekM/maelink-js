@@ -82,7 +82,7 @@ export default class MAELINK extends EventEmitter {
         }));
     }
 
-    fetchMessages(offset: number = 0) {
+    fetchMessages(offset: number = 0): Promise<any[]> {
         return new Promise((resolve, reject) => {
             this._ws.send(JSON.stringify({
                 cmd: "fetch",
